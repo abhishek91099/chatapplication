@@ -1,2 +1,2 @@
 # chatapplication
-This is chat application i have used socker flask io flask nextjs and postgres as database
+This is chat application i have used socket flask io flask nextjs and postgres as database

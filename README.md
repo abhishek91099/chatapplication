@@ -16,10 +16,4 @@ Backend: Node.js, Express.js, Socket.IO
 Database: MongoDB (or your preferred database)
 Authentication: JWT (JSON Web Tokens)
 Deployment: Docker, Kubernetes, AWS (or your preferred cloud provider)
-Getting Started:
-Clone the repository: git clone https://github.com/yourusername/chat-application.git
-Install dependencies: npm install
-Start the development server: npm run dev
-Visit http://localhost:3000 in your browser to use the application.
-Contributing:
-Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests to help improve the project.
+

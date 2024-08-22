@@ -79,29 +79,6 @@ def handle_disconnect():
     socketio.emit('user_disconnected',custom_id)
 
 
-
-# @socketio.on('message')
-# def handle_message(data):
-#     target_id = data.get('to')
-#     def ack_callback():
-#         print('Acknowledgment received')
-#         # Emit success back to the original sender
-#         print('ok')
-#         # print(connected_clients[sender])
-#         # print(sender)
-#         return True
-#     response = {'success': False}
-#     sender=data.get('from')
-#     receiver=data.get('to')
-#     message=data.get('message')
-
-#     if target_id in connected_clients:
-#         target_sid = connected_clients[target_id]
-#         socketio.emit('message', {'text': message, 'from': sender}, to=target_sid, callback=ack_callback())
-
-#     new_message=Chats(sender=sender,receiver=receiver,message=message)
-#     db_session.add(new_message)
-#     db_session.commit()
 @socketio.on('message')
 def handle_message(data):
     target_id = data.get('to')

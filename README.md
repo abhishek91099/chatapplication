@@ -1,4 +1,4 @@
-# chatapplication
+# Chatapplication
 
 Chat Application
 A real-time chat application built with modern web technologies, offering seamless communication and collaboration among users.

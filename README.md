@@ -13,7 +13,7 @@ Search Functionality: Quickly search through chats and messages to find what you
 Technologies Used:
 Frontend: React.js, TypeScript, Tailwind CSS
 Backend: Node.js, Express.js, Socket.IO
-Database: MongoDB (or your preferred database)
+Database: Postges
 Authentication: JWT (JSON Web Tokens)
-Deployment: Docker, Kubernetes, AWS (or your preferred cloud provider)
+
 

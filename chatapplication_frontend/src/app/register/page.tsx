@@ -25,7 +25,7 @@ interface LoginProps {
       if (input.username.length === 0 || input.password.length === 0) {
         window.alert('Input cannot be empty');}
       else{
-      fetch('http://192.168.229.1:5000/register',{
+      fetch('http://192.168.45.1:5000/register',{
         method: "POST",
         body: JSON.stringify({"username":input.username,"password":input.password}),  // Replace {} with your actual data
         headers: {

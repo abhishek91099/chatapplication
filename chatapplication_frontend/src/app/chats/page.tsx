@@ -1,9 +1,10 @@
 'use client';
+import { url } from 'inspector';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import 'tailwindcss/tailwind.css';
 
-const socket = io('http://192.168.229.1:5000'); 
+// const socket = io('http://192.168.45.1:5000'); 
 // Adjust the URL as needed
 
 interface Message {
@@ -35,11 +36,12 @@ const Chat: React.FC<ChatProps> = ({ auth, toggleAuth, profile, setProfile }) =>
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
   const [acknowledgment, setAcknowledgment] = useState(null);
   const [online, setOnline] = useState<Set<string>>(new Set());
+  const socket_ref=useRef<io|null>() 
 
 
   const fetch_users = async () => {
     try {
-      const response = await fetch('http://192.168.229.1:5000/users', {
+      const response = await fetch('http://192.168.45.1:5000/users', {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -54,7 +56,7 @@ const Chat: React.FC<ChatProps> = ({ auth, toggleAuth, profile, setProfile }) =>
 
   const fetch_messages = async (selectedUser: string) => {
     try {
-      const response = await fetch('http://192.168.229.1:5000/message', {
+      const response = await fetch('http://192.168.45.1:5000/message', {
         method: "POST",
         body: JSON.stringify({ sender: profile }),
         headers: { "Content-Type": "application/json" },
@@ -79,12 +81,13 @@ const Chat: React.FC<ChatProps> = ({ auth, toggleAuth, profile, setProfile }) =>
 
   useEffect(() => {
     
-    const socket = io('http://192.168.229.1:5000', {
+    const socket = io('http://192.168.45.1:5000', {
       query: { id: profile }
     });
     socket.on('connect', () => {
       console.log(socket.id); // Logs the socket ID when connected
     });
+    socket_ref.current=socket
 
     socket.on('disconnect', () => {
       console.log('disconnected'); // Logs 'disconnected' when the connection is lost
@@ -127,6 +130,8 @@ const Chat: React.FC<ChatProps> = ({ auth, toggleAuth, profile, setProfile }) =>
       socket.off('connect');
       socket.off('disconnect');
       socket.off('message');
+      socket.off('user_disconnected');
+      socket.off('online_users');
 
     };
   }, []);
@@ -134,25 +139,46 @@ const Chat: React.FC<ChatProps> = ({ auth, toggleAuth, profile, setProfile }) =>
   useEffect(() => {
     console.log('State after update:', online); // Log state changes
   }, [online]);
-  useEffect(()=>{
-    socket.on('ack', (response) => {
+  // useEffect(()=>{
+  //   socket.on('ack', (response) => {
+  //     setAcknowledgment(response.success);
+  //     console.log(response.id,'hereebady')
+  //     setMessages(prevMessages =>
+  //       prevMessages.map(msg =>
+  //         msg.id === response.id ? { ...msg, status: 'sent' } : msg
+  //       ))
+  //   });
+  //   return ()=>{
+  //     socket.off('ack');
+  //   }
+    
+
+  // })
+  useEffect(() => {
+    socket_ref.current.on('ack', (response) => {
       setAcknowledgment(response.success);
-      console.log(response.id,'hereebady')
-      setMessages(prevMessages =>
-        prevMessages.map(msg =>
-          msg.id === response.id ? { ...msg, status: 'sent' } : msg
-        ))
+      console.log(response.id, 'hereebady');
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === response.id &&
+          msg.sender === profile &&
+          msg.receiver === chat
+            ? { ...msg, status: response.success ? 'sent' : 'failed' }
+            : msg
+        )
+      );
     });
-
-  })
-
+    return () => {
+      socket_ref.current.off('ack');
+    };
+  }, [profile, chat]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (text.trim()) {
       const newMessage: Message = { id: new Date().getTime(), sender: profile, message: text, receiver: chat, status: 'sending' };
       setMessages(prevMessages => [...prevMessages, newMessage]);
   
-      socket.emit('message', { to: chat, message: text, from: profile,id:new Date().getTime() })
+      socket_ref.current.emit('message', { to: chat, message: text, from: profile,id:new Date().getTime() })
       setMessage('')
     }
   };
@@ -226,8 +252,11 @@ const Chat: React.FC<ChatProps> = ({ auth, toggleAuth, profile, setProfile }) =>
                   <></>
                 )}
             </div>
-
+            <div className='flex-col items-center justify-center'>
+            <img className='w-10 h-10 rounded-full border-3 border-gray-300' src='https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Madana_Mohana_temple_of_Bishnupur_in_Bankura_district_30.jpg/800px-Madana_Mohana_temple_of_Bishnupur_in_Bankura_district_30.jpg'/>
+                <h1>{profile}</h1>
               <button onClick={logout} className="bg-red-500 px-4 py-2 rounded-lg">Logout</button>
+              </div>
             </div>
             
 

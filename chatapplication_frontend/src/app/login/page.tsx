@@ -117,7 +117,7 @@ const Login: React.FC<LoginProps> = ({ auth, toggleAuth,profile,setProfile }) =>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://192.168.229.1:5000/login', {
+      const response = await fetch('http://192.168.45.1:5000/login', {
         method: "POST",
         body: JSON.stringify({ username: input.username, password: input.password }),
         headers: { "Content-Type": "application/json" },

@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_socketio import SocketIO,emit
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
-from sqlalchemy import Column, Integer, String, create_engine,  DateTime, func,Text,or_
+from sqlalchemy import Column, Integer, String, create_engine,  DateTime, func,Text,or_, ForeignKey,LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from urllib.parse import quote_plus
@@ -41,6 +41,12 @@ class Chats(Base):
     def __repr__(self):
         return f'<User {self.id}>'
 
+class Profile(Base):
+    __tablename__='Profile'
+    id=Column(Integer, primary_key=True)
+    username = Column(String, ForeignKey('users.username'))
+    profile_picture = Column(LargeBinary, nullable=True)
+    about_me=Column(Text,nullable=True,default=" ")
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
@@ -77,6 +83,7 @@ def handle_disconnect():
         del connected_clients[custom_id]
         print(f"User disconnected with ID: {custom_id}")
     socketio.emit('user_disconnected',custom_id)
+
 
 
 @socketio.on('message')
@@ -138,6 +145,22 @@ def register():
         db_session.add(new_user)
         db_session.commit()
         return jsonify({'success': True})
+@app.route('/update_aboutme',methods=['POST'])
+def update_aboutme():
+    data=request.get_json()
+
+
+
+
+@app.route('/profile',methods=['GET'])
+def profile():
+    data=request.get_json()
+    username=data.get('username')
+    existing_user=db_session.query(Profile).filter_by(username=username).first()
+    user_profile=[{'id':existing_user.id,'About':existing_user.about_me,'pr'}]
+    if existing_user:
+        return jsonify({'success':True})
+
 
 # Logout route
 @app.route('/logout')

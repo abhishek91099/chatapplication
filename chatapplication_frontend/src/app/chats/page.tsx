@@ -41,7 +41,7 @@ const Chat: React.FC<ChatProps> = ({ auth, toggleAuth, profile, setProfile }) =>
 
   const fetch_users = async () => {
     try {
-      const response = await fetch('http://192.168.45.1:5000/users', {
+      const response = await fetch('http://172.20.10.2:5000/users', {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -56,7 +56,7 @@ const Chat: React.FC<ChatProps> = ({ auth, toggleAuth, profile, setProfile }) =>
 
   const fetch_messages = async (selectedUser: string) => {
     try {
-      const response = await fetch('http://192.168.45.1:5000/message', {
+      const response = await fetch('http://172.20.10.2:5000/message', {
         method: "POST",
         body: JSON.stringify({ sender: profile }),
         headers: { "Content-Type": "application/json" },
@@ -81,7 +81,7 @@ const Chat: React.FC<ChatProps> = ({ auth, toggleAuth, profile, setProfile }) =>
 
   useEffect(() => {
     
-    const socket = io('http://192.168.45.1:5000', {
+    const socket = io('http://172.20.10.2:5000', {
       query: { id: profile }
     });
     socket.on('connect', () => {
